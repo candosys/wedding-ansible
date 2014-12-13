@@ -1,0 +1,13 @@
+---
+- name: Install python 2.7
+  apt: name=python2.7
+  sudo: yes
+- name: Install python Pip
+  apt: name=python-pip
+  sudo: yes
+- name: Install virtualenv
+  apt: name=python-virtualenv
+  sudo: yes
+- name: Install WSGI module of Apache
+  apt: name=libapache2-mod-wsgi
+  sudo: yes

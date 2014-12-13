@@ -1,0 +1,11 @@
+---
+- name: Update packages
+  apt: update_cache=yes cache_valid_time=3600
+  sudo: yes
+- name: Install git
+  apt: name=git
+  sudo: yes
+- name: Install apache
+  apt: name=apache2-bin
+  apt: name=apache2
+  sudo: yes

@@ -1,0 +1,8 @@
+---
+- name: Configure OVH's VPS
+  hosts: ovh
+  remote_user: ansible
+  roles:
+   - rest
+   - angular
+
