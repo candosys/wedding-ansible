@@ -9,3 +9,9 @@
   apt: name=apache2-bin
   apt: name=apache2
   sudo: yes
+- name: Stop apache
+  service: name=apache2 state=stopped
+  sudo: yes
+- name: Disable default Apache sites
+  shell: a2dissite '*' || echo -n ''
+  sudo: yes

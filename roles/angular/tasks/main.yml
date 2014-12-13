@@ -2,7 +2,7 @@
 - name: Install NodeJS
   apt: name=nodejs
   sudo: yes
-- name: Link nodejs bin to /usr/bin/node
+- name: Link nodejs bin to /usr/bin/node (thanks debian...)
   file: state=link src=/usr/bin/nodejs path=/usr/bin/node
   sudo: yes
 - name: Install npm
@@ -11,31 +11,36 @@
 - name: Copy npmrc to root directory
   copy: src=../files/npmrc dest=/home/ansible/.npmrc owner=ansible group=ansible
 - name: Create checkout directory
-  file: state=directory owner=ansible group=ansible path={{ angular_folder }}
+  file: state=directory owner=ansible group=ansible path={{ angular_git_folder }}
   sudo: yes
 - name: Checkout git repo
   git: repo=git://github.com/francois-travais/wedding-angular.git
-       dest={{ angular_folder }}
+       dest={{ angular_git_folder }}
        accept_hostkey=yes
 - name: Install node_modules
-  shell: chdir={{ angular_folder }} npm install
+  shell: chdir={{ angular_git_folder }} npm install
 - name: Verify that npm install installed bower components
-  stat: path={{ angular_folder }}/app/bower_components
+  stat: path={{ angular_git_folder }}/app/bower_components
   register: st
 - fail: msg="Npm install failed"
   when: st.stat.isdir is not defined or not st.stat.isdir
 - name: Remove existing files
-  shell: rm -rf /var/www/html/*
+  file: state=absent path={{ angular_apache_folder }}
   sudo: yes
-- name: Stop Apache
-  service: name=apache2 state=stopped
+- name: Create empty angular directory
+  file: state=directory path={{ angular_apache_folder }}
   sudo: yes
-- name: Copy sources to /var/www/html
-  shell: cp -r {{ angular_folder }}app/* /var/www/html/
+- name: Copy sources to {{ angular_apache_folder }}
+  shell: cp -r {{ angular_git_folder }}app/* {{ angular_apache_folder }}
   sudo: yes
 - name: Adjust ownership and permissions
-  file: state=directory path=/var/www/html/ recurse=yes mode='u=rwx,g=r,o=r' owner=www-data group=www-data
+  file: state=directory path={{ angular_apache_folder }} recurse=yes mode='740' owner=www-data group=www-data
   sudo: yes
-- name: Start Apache
-  service: name=apache2 state=started
+  notify: restart apache
+- name: Copy apache site
+  template: src=../templates/angular.conf.j2 dest=/etc/apache2/sites-available/angular.conf owner=root group=root mode=644
   sudo: yes
+- name: Enable Apache site
+  shell: a2ensite angular
+  sudo: yes
+  notify: reload apache

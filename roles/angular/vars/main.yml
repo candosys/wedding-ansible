@@ -1,2 +1,3 @@
 ---
-angular_folder: /opt/angular/
+angular_git_folder: /opt/angular/
+angular_apache_folder: /var/www/angular/
