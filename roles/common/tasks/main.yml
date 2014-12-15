@@ -14,4 +14,30 @@
   sudo: yes
 - name: Disable default Apache sites
   shell: a2dissite '*' || echo -n ''
+  notify: reload apache
+  sudo: yes
+
+- name: Disable default Apache configurations
+  shell: a2disconf '*' || echo -n ''
+  notify: reload apache
+  sudo: yes
+- name: Enable default Apache logging conf
+  command: a2enconf other-vhosts-access-log
+  notify: reload apache
+  sudo: yes
+
+- name: Copy Apache security conf
+  copy: src=../files/security.conf dest=/etc/apache2/conf-available/security.conf mode=644 owner=root group=root
+  sudo: yes
+- name: Enable Apache security conf
+  command: a2enconf security
+  notify: reload apache
+  sudo: yes
+
+- name: Copy Apache charset conf
+  copy: src=../files/charset.conf dest=/etc/apache2/conf-available/charset.conf mode=644 owner=root group=root
+  sudo: yes
+- name: Enable Apache charset conf
+  command: a2enconf charset
+  notify: reload apache
   sudo: yes
