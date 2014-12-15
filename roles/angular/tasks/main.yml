@@ -8,6 +8,15 @@
 - name: Install npm
   apt: name=npm
   sudo: yes
+
+- name: Copy apache site
+  template: src=../templates/angular.conf.j2 dest=/etc/apache2/sites-available/angular.conf owner=root group=root mode=644
+  sudo: yes
+- name: Enable Apache site
+  shell: a2ensite angular
+  sudo: yes
+  notify: reload apache
+
 - name: Copy npmrc to root directory
   copy: src=../files/npmrc dest=/home/ansible/.npmrc owner=ansible group=ansible
 - name: Create checkout directory
@@ -24,6 +33,7 @@
   register: st
 - fail: msg="Npm install failed"
   when: st.stat.isdir is not defined or not st.stat.isdir
+
 - name: Remove existing files
   file: state=absent path={{ angular_apache_folder }}
   sudo: yes
@@ -33,14 +43,8 @@
 - name: Copy sources to {{ angular_apache_folder }}
   shell: cp -r {{ angular_git_folder }}app/* {{ angular_apache_folder }}
   sudo: yes
+  notify: restart apache
 - name: Adjust ownership and permissions
   file: state=directory path={{ angular_apache_folder }} recurse=yes mode='740' owner=www-data group=www-data
   sudo: yes
   notify: restart apache
-- name: Copy apache site
-  template: src=../templates/angular.conf.j2 dest=/etc/apache2/sites-available/angular.conf owner=root group=root mode=644
-  sudo: yes
-- name: Enable Apache site
-  shell: a2ensite angular
-  sudo: yes
-  notify: reload apache

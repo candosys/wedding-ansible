@@ -9,16 +9,24 @@
         #ServerName www.example.com
 
         ServerAdmin francois@localhost.com
-        DocumentRoot {{ angular_apache_folder }}
+        WSGIDaemonProcess wedding-rest user=www-data group=www-data threads=5
+        WSGIScriptAlias / {{ rest_apache_folder }}rest.wsgi
+
+         <Directory {{ rest_apache_folder }}>
+             WSGIProcessGroup wedding-rest
+             WSGIApplicationGroup %{GLOBAL}
+             Order deny,allow
+             Allow from all
+         </Directory>
 
         # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
         # error, crit, alert, emerg.
         # It is also possible to configure the loglevel for particular
         # modules, e.g.
-        #LogLevel info ssl:warn
+        LogLevel debug
 
-        ErrorLog ${APACHE_LOG_DIR}/angular-error.log
-        CustomLog ${APACHE_LOG_DIR}/angular-access.log combined
+        ErrorLog ${APACHE_LOG_DIR}/rest-error.log
+        CustomLog ${APACHE_LOG_DIR}/rest-access.log combined
 
         # For most configuration files from conf-available/, which are
         # enabled or disabled at a global level, it is possible to

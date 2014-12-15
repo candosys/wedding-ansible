@@ -5,9 +5,57 @@
 - name: Install python Pip
   apt: name=python-pip
   sudo: yes
-- name: Install virtualenv
-  apt: name=python-virtualenv
+
+- name: Install Flask
+  pip: name=Flask
   sudo: yes
+- name: Install Flask CORS
+  pip: name=Flask-Cors
+  sudo: yes
+- name: Install PyMongo
+  pip: name=pymongo
+  sudo: yes
+
 - name: Install WSGI module of Apache
   apt: name=libapache2-mod-wsgi
   sudo: yes
+- name: Enable WSGI mode
+  apache2_module: state=present name=wsgi
+  sudo: yes
+  notify: reload apache
+- name: Copy apache site
+  template: src=../templates/rest.conf.j2 dest=/etc/apache2/sites-available/rest.conf owner=root group=root mode=644
+  sudo: yes
+- name: Enable Apache site
+  shell: a2ensite rest
+  sudo: yes
+  notify: reload apache
+
+- name: Create checkout directory
+  file: state=directory owner=ansible group=ansible path={{ rest_git_folder }}
+  sudo: yes
+- name: Checkout git repo
+  git: repo=git://github.com/francois-travais/wedding-rest.git
+       dest={{ rest_git_folder }}
+       accept_hostkey=yes
+- name: Copy production config.ini
+  copy: src=../files/config.ini dest={{ rest_git_folder }}wedding_rest/config.ini
+- name: Create tarball
+  command: chdir={{ rest_git_folder }} python setup.py sdist
+- name: pip install wedding_rest
+  pip: name='{{ rest_git_folder }}dist/wedding_rest-{{ rest_version }}.tar.gz'
+  sudo: yes
+
+- name: Remove existing files
+  file: state=absent path={{ rest_apache_folder }}
+  sudo: yes
+- name: Create empty rest directory
+  file: state=directory path={{ rest_apache_folder }} owner=ansible
+  sudo: yes
+- name: Copy WSGI file to {{ rest_apache_folder }}
+  shell: cp {{ rest_git_folder }}rest.wsgi {{ rest_apache_folder }}
+  notify: restart apache
+- name: Adjust ownership and permissions
+  file: state=directory path={{ rest_apache_folder }} recurse=yes mode='740' owner=www-data group=www-data
+  sudo: yes
+  notify: restart apache
