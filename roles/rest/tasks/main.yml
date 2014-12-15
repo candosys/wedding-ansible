@@ -42,6 +42,9 @@
   copy: src=../files/config.ini dest={{ rest_git_folder }}wedding_rest/config.ini
 - name: Create tarball
   command: chdir={{ rest_git_folder }} python setup.py sdist
+- name: pip uninstall wedding_rest
+  pip: state=absent name=wedding_rest
+  sudo: yes
 - name: pip install wedding_rest
   pip: name='{{ rest_git_folder }}dist/wedding_rest-{{ rest_version }}.tar.gz'
   sudo: yes
