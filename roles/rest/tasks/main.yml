@@ -23,13 +23,6 @@
   apache2_module: state=present name=wsgi
   sudo: yes
   notify: reload apache
-- name: Copy apache site
-  template: src=../templates/rest.conf.j2 dest=/etc/apache2/sites-available/rest.conf owner=root group=root mode=644
-  sudo: yes
-- name: Enable Apache site
-  shell: a2ensite rest
-  sudo: yes
-  notify: reload apache
 
 - name: Create checkout directory
   file: state=directory owner=ansible group=ansible path={{ rest_git_folder }}

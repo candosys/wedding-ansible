@@ -16,6 +16,13 @@
   shell: a2dissite '*' || echo -n ''
   notify: reload apache
   sudo: yes
+- name: Copy apache site
+  template: src=../templates/wedding.conf.j2 dest=/etc/apache2/sites-available/wedding.conf owner=root group=root mode=644
+  sudo: yes
+- name: Enable Apache site
+  shell: a2ensite wedding
+  sudo: yes
+  notify: reload apache
 
 - name: Disable default Apache configurations
   shell: a2disconf '*' || echo -n ''

@@ -9,14 +9,6 @@
   apt: name=npm
   sudo: yes
 
-- name: Copy apache site
-  template: src=../templates/angular.conf.j2 dest=/etc/apache2/sites-available/angular.conf owner=root group=root mode=644
-  sudo: yes
-- name: Enable Apache site
-  shell: a2ensite angular
-  sudo: yes
-  notify: reload apache
-
 - name: Copy npmrc to root directory
   copy: src=../files/npmrc dest=/home/ansible/.npmrc owner=ansible group=ansible
 - name: Create checkout directory
@@ -26,6 +18,8 @@
   git: repo=git://github.com/francois-travais/wedding-angular.git
        dest={{ angular_git_folder }}
        accept_hostkey=yes
+- name: Copy config.js
+  template: src=../templates/config.js.j2 dest={{ angular_git_folder }}app/config/config.js
 - name: Install node_modules
   shell: chdir={{ angular_git_folder }} npm install
 - name: Verify that npm install installed bower components
