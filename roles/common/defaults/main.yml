@@ -1,7 +1,4 @@
 ---
-angular_git_folder: /opt/angular/
 angular_apache_folder: /var/www/angular/
-rest_git_folder: /opt/rest/
 rest_apache_folder: /var/www/rest/
-rest_version: 1.0.0
 server_name: localhost

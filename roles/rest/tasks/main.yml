@@ -32,7 +32,7 @@
        dest={{ rest_git_folder }}
        accept_hostkey=yes
 - name: Copy production config.ini
-  copy: src=../files/config.ini dest={{ rest_git_folder }}wedding_rest/config.ini
+  template: src=../templates/config.ini.j2 dest={{ rest_git_folder }}wedding_rest/config.ini
 - name: Create tarball
   command: chdir={{ rest_git_folder }} python setup.py sdist
 - name: pip uninstall wedding_rest

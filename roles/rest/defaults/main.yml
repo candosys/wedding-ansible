@@ -1,0 +1,9 @@
+---
+mongo_host: localhost
+mongo_port: 27017
+mongo_user:
+mongo_password:
+mongo_database: wedding
+rest_git_folder: /opt/rest/
+rest_apache_folder: /var/www/rest/
+rest_version: 1.0.0

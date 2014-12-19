@@ -3,6 +3,6 @@
   hosts: ovh
   remote_user: ansible
   roles:
+   - mongo
    - rest
    - angular
-

@@ -6,7 +6,6 @@
   apt: name=git
   sudo: yes
 - name: Install apache
-  apt: name=apache2-bin
   apt: name=apache2
   sudo: yes
 - name: Stop apache
