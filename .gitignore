@@ -1,3 +1,4 @@
 *.iml
 hosts
 host_vars/ovh
+roles/mongo/files/accommodation.json
