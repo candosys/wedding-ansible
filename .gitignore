@@ -2,3 +2,4 @@
 hosts
 host_vars/ovh
 roles/mongo/files/accommodation.json
+roles/mongo/files/password.json

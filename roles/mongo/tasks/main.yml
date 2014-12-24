@@ -15,12 +15,25 @@
 - name: Create directory
   file: state=directory owner=ansible group=ansible path={{ mongo_workspace }}
   sudo: yes
-- name: Remove file on server
-  file: state=absent path={{ mongo_workspace }}accommodation.json
-- name: Push file on server
-  copy: src=../files/accommodation.json dest={{ mongo_workspace }}accommodation.json
 
+- name: Remove accommodation file on server
+  file: state=absent path={{ mongo_workspace }}accommodation.json
+- name: Push accommodation file on server
+  copy: src=../files/accommodation.json dest={{ mongo_workspace }}accommodation.json
 - name: Remove accommodations
   command: mongo --host {{ mongo_host }} --port {{ mongo_port }} -u {{ mongo_user }} -p {{ mongo_password }} --eval "db.accommodations.remove({})" {{ mongo_database }}
 - name: Import accommodations
   command: mongoimport --host {{ mongo_host }}:{{ mongo_port }} -u {{ mongo_user }} -p {{ mongo_password }} --db {{ mongo_database }} --collection accommodations --jsonArray --file {{ mongo_workspace }}accommodation.json
+- name: Remove accommodation file on server
+  file: state=absent path={{ mongo_workspace }}accommodation.json
+
+- name: Remove password file on server
+  file: state=absent path={{ mongo_workspace }}password.json
+- name: Push password file on server
+  copy: src=../files/password.json dest={{ mongo_workspace }}password.json
+- name: Remove passwords
+  command: mongo --host {{ mongo_host }} --port {{ mongo_port }} -u {{ mongo_user }} -p {{ mongo_password }} --eval "db.passwords.remove({})" {{ mongo_database }}
+- name: Import passwords
+  command: mongoimport --host {{ mongo_host }}:{{ mongo_port }} -u {{ mongo_user }} -p {{ mongo_password }} --db {{ mongo_database }} --collection passwords --jsonArray --file {{ mongo_workspace }}password.json
+- name: Remove password file on server
+  file: state=absent path={{ mongo_workspace }}password.json
