@@ -27,6 +27,17 @@
 - name: Remove accommodation file on server
   file: state=absent path={{ mongo_workspace }}accommodation.json
 
+- name: Remove gifts file on server
+  file: state=absent path={{ mongo_workspace }}gift.json
+- name: Push gift file on server
+  copy: src=../files/gift.json dest={{ mongo_workspace }}gift.json
+- name: Remove gifts
+  command: mongo --host {{ mongo_host }} --port {{ mongo_port }} -u {{ mongo_user }} -p {{ mongo_password }} --eval "db.gifts.remove({})" {{ mongo_database }}
+- name: Import gifts
+  command: mongoimport --host {{ mongo_host }}:{{ mongo_port }} -u {{ mongo_user }} -p {{ mongo_password }} --db {{ mongo_database }} --collection gifts --jsonArray --file {{ mongo_workspace }}gift.json
+- name: Remove gift file on server
+  file: state=absent path={{ mongo_workspace }}gift.json
+
 - name: Remove password file on server
   file: state=absent path={{ mongo_workspace }}password.json
 - name: Push password file on server
