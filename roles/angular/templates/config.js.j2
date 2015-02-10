@@ -2,5 +2,6 @@
 
 var config = angular.module('config', []);
 config.constant('restHost', '{{ server_name }}');
-config.constant('restPort', 80);
+config.constant('restProtocol', 'http');
+config.constant('restPort', 8080);
 config.constant('restPath', 'rest/v1');

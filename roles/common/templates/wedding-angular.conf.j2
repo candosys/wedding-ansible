@@ -1,0 +1,10 @@
+<VirtualHost *:80>
+    ServerName {{ server_name }}
+
+    Alias / {{ angular_apache_folder }}
+    <Directory {{ angular_apache_folder }}>
+        Order deny,allow
+        Require all granted
+        Allow from all
+    </Directory>
+</VirtualHost>
